@@ -24,10 +24,10 @@ module Control.Concurrent.STM.TSem
   , signalTSemN
   ) where
 
-import Control.Concurrent.STM
-import Control.Monad
-import Data.Typeable
-import Data.Word as Word
+import           Control.Concurrent.STM
+import           Control.Monad
+import           Data.Typeable
+import           Data.Word              as Word
 
 -- | 'TSem' is a transactional semaphore.  It holds a certain number
 -- of units, and units may be acquired or released by 'waitTSem' and
@@ -86,9 +86,7 @@ waitTSem (TSem t) = do
 --
 -- @since 2.4.2
 signalTSem :: TSem -> STM ()
-signalTSem (TSem t) = do
-  i <- readTVar t
-  writeTVar t $! i+1
+signalTSem = signalTSemN 1
 
 
 -- | Multi-signal a 'TSem'
@@ -101,7 +99,6 @@ signalTSem (TSem t) = do
 -- @since 2.4.5
 signalTSemN :: Word.Word -> TSem -> STM ()
 signalTSemN 0 _ = return ()
-signalTSemN 1 s = signalTSem s
 signalTSemN n (TSem t) = do
   i <- readTVar t
   writeTVar t $! i+(toInteger n)
